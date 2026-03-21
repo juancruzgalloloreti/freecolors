@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <!--
 ╔══════════════════════════════════════════════════════════════╗
 ║  FREECOLORS — PÁGINA DE INICIO  v4.0  (producción)          ║
@@ -118,18 +118,14 @@
     .logo span { color: var(--azul-claro); } /* la parte "COLORS" en azul */
 
     .nav-links { list-style: none; display: none; } /* visible solo en desktop */
-    .nav-actions { display: flex; align-items: center; gap: 0.5rem; }
-    .nav-enlace-catalogo { display: none; }          /* visible solo en desktop */
 
-    /* Botón ☰ hamburguesa, solo visible en mobile */
-    .boton-menu {
+    .btn-menu-mobile {
       background: none; border: none; cursor: pointer;
       color: var(--blanco); font-size: 1.5rem;
       min-width: 48px; min-height: 48px;
       display: flex; align-items: center; justify-content: center;
       border-radius: 8px;
     }
-    .boton-menu:active { background: rgba(255,255,255,0.1); }
 
 
     /* ═══════════════════════════════════════════════
@@ -494,12 +490,10 @@
       nav { height: 64px; padding: 0 5%; }
       .logo-imagen { height: 46px; }
       .logo { font-size: 1.9rem; }
-      .nav-links { display: flex; gap: 2rem; }
+      .nav-links { display: flex; gap: 1.5rem; }
       .nav-links a { color: var(--gris); text-decoration: none; font-size: 0.85rem; font-weight: 500; text-transform: uppercase; transition: color 0.2s; }
-      .nav-links a:hover { color: var(--azul-claro); }
-      .boton-menu { display: none; }
-      .nav-enlace-catalogo { display: inline-flex; align-items: center; background: transparent; border: 1.5px solid rgba(77,163,255,0.4); color: var(--azul-claro); padding: 0.45rem 1rem; border-radius: 6px; font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 600; text-decoration: none; transition: all 0.2s; }
-      .nav-enlace-catalogo:hover { background: rgba(77,163,255,0.1); }
+      .nav-links a:hover { color: var(--blanco); }
+      .btn-menu-mobile { display: none; }
 
 
       /* Hero en 2 columnas */
@@ -568,10 +562,7 @@
       <li><a href="catalogo.html">Catálogo</a></li>
       <li><a href="contacto.html">Contacto</a></li>
     </ul>
-    <div class="nav-actions">
-      <a href="catalogo.html" class="nav-enlace-catalogo">🎨 Catálogo</a>
-      <button class="boton-menu" onclick="toggleMenu()" aria-label="Abrir menú">☰</button>
-    </div>
+    <button class="btn-menu-mobile" onclick="toggleMenu()" aria-label="Abrir menú">☰</button>
   </nav>
 
   <!-- Menú mobile -->

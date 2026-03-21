@@ -108,7 +108,6 @@
 
     .nav-links { list-style: none; display: none; }
     .nav-acciones { display: flex; align-items: center; gap: 0.5rem; }
-    .nav-inicio { display: none; }
 
     .btn-carrito-nav {
       background: var(--color-degradado); color: #fff; border: none; cursor: pointer;
@@ -220,26 +219,7 @@
     /* ═══════════════════════════════════════════════
        6. BARRA DE CATEGORÍAS (sticky debajo del nav)
     ═══════════════════════════════════════════════ */
-    .barra-categorias {
-      background: #fff; border-bottom: 1px solid var(--sidebar-borde);
-      padding: 0.85rem 4%; position: sticky; top: 60px; z-index: 100;
-    }
-    .categorias-lista {
-      display: flex; gap: 0.5rem;
-      overflow-x: auto; -webkit-overflow-scrolling: touch;
-      scrollbar-width: none; padding-bottom: 2px;
-    }
-    .categorias-lista::-webkit-scrollbar { display: none; }
-
-    .chip-categoria {
-      display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0;
-      background: #f0f6ff; border: 1.5px solid var(--sidebar-borde);
-      color: #4a6080; padding: 0.5rem 1rem; border-radius: 20px;
-      font-family: 'DM Sans', sans-serif; font-size: 0.8rem; font-weight: 700;
-      cursor: pointer; min-height: 38px; transition: all var(--transicion); white-space: nowrap;
-    }
-    .chip-categoria:hover  { border-color: var(--color-primario); color: var(--color-primario); }
-    .chip-categoria.activo { background: var(--color-degradado); border-color: transparent; color: #fff; box-shadow: 0 4px 14px rgba(0,68,255,0.25); }
+    .barra-categorias { display: none; }
 
     /* ═══════════════════════════════════════════════
        7. CHIPS DE FILTROS ACTIVOS
@@ -749,17 +729,14 @@
       .logo-imagen { height: 46px; }
       .nav-links { display: flex; gap: 1.5rem; }
       .nav-links a { color: var(--color-gris); text-decoration: none; font-size: 0.85rem; font-weight: 500; text-transform: uppercase; transition: color var(--transicion); }
-      .nav-links a:hover, .nav-links a.activo { color: var(--color-claro); }
+      .nav-links a:hover, .nav-links a.activo { color: var(--color-fondo); }
       .btn-menu-mobile { display: none; }
-      .nav-inicio { display: inline-flex; align-items: center; background: transparent; border: 1.5px solid rgba(77,163,255,0.4); color: var(--color-claro); padding: 0.45rem 1rem; border-radius: 6px; font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 600; text-decoration: none; transition: all var(--transicion); }
-      .nav-inicio:hover { background: rgba(77,163,255,0.1); }
-
       /* Ocultar FAB y drawer en desktop */
       .fab-filtros, .filtros-overlay, .filtros-drawer { display: none; }
 
       /* Ajustes de barras */
       .header-catalogo { padding: calc(64px + 3rem) 5% 2.5rem; }
-      .barra-categorias { top: 64px; padding: 0.85rem 5%; }
+      /* Barra de categorías oculta — filtros de marca están en el sidebar */
       .barra-filtros-activos { padding: 0.6rem 5%; }
 
       /* Layout de 2 columnas */
@@ -817,7 +794,6 @@
       <li><a href="contacto.html">Contacto</a></li>
     </ul>
     <div class="nav-acciones">
-      <a href="index.html" class="nav-inicio">← Inicio</a>
       <button class="btn-carrito-nav" onclick="toggleCarrito()">
         🛒 <span class="badge-carrito" id="badgeCarritoNav">0</span>
       </button>
@@ -1070,7 +1046,7 @@
 <!-- Banner de enriquecimiento de precios IA -->
 <div id="ia-precio-banner">
   <div class="ia-spinner"></div>
-  <span id="ia-precio-texto">🤖 Actualizando precios con IA...</span>
+  <span id="ia-precio-texto">Actualizando catálogo...</span>
 </div>
 
 <!-- Toast de notificaciones -->
@@ -1311,6 +1287,7 @@ const MARCA_ALIAS = {
   'METALATEX':   'Sherwin Williams',
   'SHERWIN':     'Sherwin Williams',
   'WILLIAMS':    'Sherwin Williams',
+  'SW':          'Sherwin Williams',
   'RUST':        'Rust-Oleum',
   'RUST-OLEUM':  'Rust-Oleum',
   'RUST OLEUM':  'Rust-Oleum',
@@ -1435,7 +1412,7 @@ const MARCAS_1P = [
   'DEKO','COLORTEX','COATEX','NATURBEL','RESIN','NOVECOL',
   'FICSEAL','ISOVER','KNAUF','FIBROFLEX','PROFLEX',
   'AISLACOR','MEGASEAL','POLIPLAS','POLIMEX','MASTICO',
-  'SHERWIN','WILLIAMS',
+  'SHERWIN','WILLIAMS','SW',
   'LUSQTOFF','FREECOLORS','FREE',
   // ── Marcas descubiertas en CSV ────────────────────────────
   'PARTHENON','PREFERENCE','RUCAR','RAPIFIX',
@@ -1719,6 +1696,8 @@ async function cargarDesdeSheets() {
       .filter(p => p.nombre.length > 2 && !p.nombre.includes('PRUEBAS'));
 
     log(`Cargados ${rawProductos.length} registros individuales.`);
+    window._totalProductosCargados = rawProductos.length;
+
     // Diagnóstico: mostrar primeros 5 productos para verificar mapeo de columnas
     rawProductos.slice(0, 5).forEach((p, i) => log(`  [${i}] ${p.nombre} → $${p.precio} | stock:${p.stock} | cod:${p.codigo}`));
     CATALOGO = agruparProductos(rawProductos);
@@ -1944,7 +1923,7 @@ async function enriquecerPreciosConIA() {
   }
 
   console.log(`%c[PreciosIA] Iniciando enriquecimiento de ${sinPrecio.length} productos sin precio...`, 'color:#9900ee;font-weight:bold');
-  _iaBanner(true, `🤖 Buscando precios actualizados (${sinPrecio.length} productos)...`);
+  _iaBanner(true, `Actualizando catálogo (${sinPrecio.length} productos)...`);
 
   const SYSTEM_PROMPT = `Eres un experto en precios de pinturas y materiales para la construcción en Argentina en el año 2026. \
 Tu tarea es buscar y proporcionar precios de lista ACTUALES en pesos argentinos (ARS) para productos de pintura. \
@@ -1963,13 +1942,13 @@ Si no conocés el precio con razonable certeza, omití el producto del JSON.`;
     const batch = sinPrecio.slice(i, i + BATCH_SIZE);
     const progreso = Math.round(((i + batch.length) / sinPrecio.length) * 100);
 
-    _iaBanner(true, `🤖 Actualizando precios... ${progreso}% (${i + batch.length}/${sinPrecio.length})`);
+    _iaBanner(true, `Actualizando catálogo... ${progreso}% (${i + batch.length}/${sinPrecio.length})`);
 
     // Armar lista para el prompt
     const lista = batch.map(p => {
       const varStr = p.variantes
         .map(v => v.label)
-        .filter(l => l !== 'Único')
+        .filter(l => l && l !== 'Único')
         .join(', ');
       return varStr ? `- ${p.nombre} [${varStr}]` : `- ${p.nombre}`;
     }).join('\n');
@@ -2113,7 +2092,7 @@ function extraerGrupoBase(nombre) {
  */
 function extraerVariante(nombreCompleto, nombreBase) {
   const colorDet = detectarColor(nombreCompleto);
-  
+
   // Buscar acabados (Brillante, Mate, etc.)
   const descriptores = ['BRILLANTE', 'MATE', 'SATINADO', 'MADERA', 'MADERS', 'COLORES', 'VARIOS'];
   let acabadoEncontrado = '';
@@ -2138,7 +2117,6 @@ function extraerVariante(nombreCompleto, nombreBase) {
   // Caso 1: Si detectamos un color conocido (ej: "Azul Real")
   if (colorDet) {
     let label = colorDet.label.charAt(0) + colorDet.label.slice(1).toLowerCase();
-    // Si además tiene un acabado (ej: "Azul Mate"), lo agregamos al nombre
     if (acabadoEncontrado && !label.toLowerCase().includes(acabadoEncontrado)) {
       label += ' ' + acabadoEncontrado;
     }
@@ -2150,8 +2128,31 @@ function extraerVariante(nombreCompleto, nombreBase) {
     return { label: sizeLabel, hex: null, tipo: 'tamaño' };
   }
 
-  // Caso 3: Si no detectamos nada especial, devolvemos "Único"
-  return { label: 'Único', hex: null, tipo: 'unico' };
+  // Caso 3: Extraer diferencia entre nombre completo y nombre base
+  const fullUp = nombreCompleto.trim().toUpperCase();
+  const baseUp = nombreBase.trim().toUpperCase();
+  if (fullUp !== baseUp) {
+    // 3a: Si el base es prefijo directo
+    if (fullUp.startsWith(baseUp)) {
+      const diff = nombreCompleto.trim().substring(baseUp.length).trim();
+      if (diff.length > 0 && diff.length < 50) {
+        const label = diff.charAt(0).toUpperCase() + diff.slice(1).toLowerCase();
+        return { label, hex: null, tipo: 'color' };
+      }
+    }
+    // 3b: Extraer palabras del nombre completo que no están en el base
+    const baseWords = new Set(baseUp.split(/\s+/));
+    const fullWords = fullUp.split(/\s+/);
+    const diffWords = fullWords.filter(w => !baseWords.has(w));
+    if (diffWords.length > 0 && diffWords.length < 6) {
+      const diff = diffWords.join(' ');
+      const label = diff.charAt(0).toUpperCase() + diff.slice(1).toLowerCase();
+      return { label, hex: null, tipo: 'color' };
+    }
+  }
+
+  // Caso 4: No hay variante distinguible
+  return { label: '', hex: null, tipo: 'unico' };
 }
 
 /**
@@ -2182,7 +2183,8 @@ function agruparProductos(rawProductos) {
 
     for (const f of filas) {
       const v = extraerVariante(f.nombre, nombreBase);
-      const key = v.label.toUpperCase();
+      // Si no hay label, usar el nombre completo como key para no colapsar variantes distintas
+      const key = v.label ? v.label.toUpperCase() : f.nombre.toUpperCase();
       
       const existente = variantesMap.get(key);
       // Priorizamos la variante que tiene stock y PRECIO real (> 0)
@@ -2236,9 +2238,11 @@ function agruparProductos(rawProductos) {
     const hayStock = variantes.some(v => v.stock > 0);
     const varPrincipal = variantes[0];
 
-    // Usar marca del Sheet si existe, si no detectar del nombre
+    // Detectar marca del nombre (tiene prioridad si encuentra algo específico)
     const marcaSheet = filas.find(f => f.marcaSheet)?.marcaSheet || '';
-    const marcaDetectada = marcaSheet || detectarMarca(nombreBase);
+    const marcaDelNombre = detectarMarca(nombreBase);
+    // Si detectarMarca encuentra algo, usarlo. Si no, usar marcaSheet como fallback.
+    const marcaDetectada = marcaDelNombre || marcaSheet;
     catalogoFinal.push({
       id: idCounter++,
       nombre: nombreBase,
@@ -2272,8 +2276,33 @@ function agruparProductos(rawProductos) {
   estado.precioMin = _precioMin;
   estado.precioMax = _precioMax;
 
-  // Orden final: Con stock arriba y por precio descendente
-  return catalogoFinal.sort((a, b) => (b.stock - a.stock) || (b.precio - a.precio));
+  // Orden final: Con stock arriba, luego intercalar marcas (round-robin)
+  // para que el catálogo no muestre solo productos caros de una marca
+  catalogoFinal.sort((a, b) => (b.stock ? 1 : 0) - (a.stock ? 1 : 0));
+
+  // Round-robin por marca: tomar 1 de cada marca en cada ronda
+  const porMarca = new Map();
+  for (const p of catalogoFinal) {
+    const m = p.marca || 'Otras';
+    if (!porMarca.has(m)) porMarca.set(m, []);
+    porMarca.get(m).push(p);
+  }
+  // Ordenar las marcas por cantidad de productos desc para dar prioridad visual
+  const marcasOrdenadas = [...porMarca.entries()].sort((a, b) => b[1].length - a[1].length);
+  const resultado = [];
+  let quedan = true;
+  let ronda = 0;
+  while (quedan) {
+    quedan = false;
+    for (const [, prods] of marcasOrdenadas) {
+      if (ronda < prods.length) {
+        resultado.push(prods[ronda]);
+        quedan = true;
+      }
+    }
+    ronda++;
+  }
+  return resultado;
 }
 
 
@@ -2398,8 +2427,8 @@ function filtrarProductos(lista, est) {
         return score(b) - score(a);
       }
       
-      // Por defecto: Stock primero
-      return (b.stock ? 1 : 0) - (a.stock ? 1 : 0);
+      // Por defecto: mantener el orden original (ya interleaved por marca)
+      return 0;
     });
 }
 
@@ -2913,8 +2942,15 @@ function htmlPanelFiltros() {
   CATALOGO.forEach(p => {
     if (p.marca) marcasDisponibles[p.marca] = (marcasDisponibles[p.marca] || 0) + 1;
   });
+  const MARCAS_PRIORITARIAS = ['Freecolors', 'Sherwin Williams'];
   const marcasOrdenadas = Object.entries(marcasDisponibles)
     .sort((a, b) => {
+      // Freecolors y Sherwin Williams siempre primero
+      const priA = MARCAS_PRIORITARIAS.indexOf(a[0]);
+      const priB = MARCAS_PRIORITARIAS.indexOf(b[0]);
+      if (priA >= 0 && priB >= 0) return priA - priB;
+      if (priA >= 0) return -1;
+      if (priB >= 0) return 1;
       // "Otras" siempre al final
       if (a[0] === 'Otras') return 1;
       if (b[0] === 'Otras') return -1;
@@ -3738,8 +3774,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 5. Actualizar subtítulo con la cantidad real de productos
     const sub = document.getElementById('headerSubtitulo');
     if (sub) {
-      const totalVariantes = CATALOGO.reduce((sum, p) => sum + (p.variantes ? p.variantes.length : 1), 0);
-      sub.textContent = `${totalVariantes.toLocaleString('es-AR')} productos disponibles. Encontrá lo que necesitás con los filtros.`;
+      const totalCargados = window._totalProductosCargados || CATALOGO.reduce((sum, p) => sum + (p.variantes ? p.variantes.length : 1), 0);
+      sub.textContent = `${totalCargados.toLocaleString('es-AR')} productos disponibles. Encontrá lo que necesitás con los filtros.`;
     }
 
     // 6. Inicializar rango de precio con los valores reales del catálogo

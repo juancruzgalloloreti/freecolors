@@ -60,7 +60,7 @@
     .nav-links { list-style: none; display: none; }
     .nav-links li { margin: 0 1rem; }
     .nav-links a { color: var(--gris); text-decoration: none; font-size: 0.85rem; font-weight: 500; text-transform: uppercase; transition: color 0.2s; }
-    .nav-links a:hover { color: var(--azul-claro); }
+    .nav-links a:hover { color: var(--blanco); }
     .nav-links a.activo { color: var(--blanco); font-weight: 700; }
     
     .nav-actions { display: flex; align-items: center; gap: 0.5rem; }
@@ -85,7 +85,7 @@
       display: flex; align-items: center; justify-content: center;
     }
 
-    .boton-menu {
+    .btn-menu-mobile {
       background: none; border: none; cursor: pointer;
       color: var(--blanco); font-size: 1.5rem;
       min-width: 48px; min-height: 48px;
@@ -108,6 +108,7 @@
       border-bottom: 1px solid rgba(77,163,255,0.1);
     }
     .menu-mobile a:last-child { border-bottom: none; }
+    .menu-mobile a:active { color: var(--blanco); }
 
     /* Header */
     .header-contacto {
@@ -173,10 +174,14 @@
     .brand-background img { width: 100%; height: 100%; object-fit: contain; filter: grayscale(1); }
 
     @media (min-width: 768px) {
+      nav { height: 64px; padding: 0 5%; }
+      .logo-imagen { height: 46px; }
+      .nav-links { display: flex; gap: 1.5rem; }
+      .nav-links a { color: var(--gris); text-decoration: none; font-size: 0.85rem; font-weight: 500; text-transform: uppercase; transition: color 0.2s; }
+      .nav-links a:hover { color: var(--blanco); }
+      .nav-links a.activo { color: var(--blanco); font-weight: 700; }
+      .btn-menu-mobile { display: none; }
       .grid-contacto { grid-template-columns: 1fr 1.2fr; }
-      .nav-links { display: flex; gap: 1rem; }
-      .nav-enlace-catalogo { display: inline-block; }
-      .boton-menu { display: none; }
     }
   </style>
 </head>
